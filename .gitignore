@@ -1,0 +1,21 @@
+# Microsoft Word files
+*.doc
+*.docx
+*.docm
+*.dot
+*.dotx
+*.dotm
+
+# Microsoft Office temporary / lock files
+~$*.doc
+~$*.docx
+~$*.docm
+~$*.dot
+~$*.dotx
+~$*.dotm
+~$*.xlsx
+~$*.pptx
+~$*
+
+# Temporary files
+*.tmp
