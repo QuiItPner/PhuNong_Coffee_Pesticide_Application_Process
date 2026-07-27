@@ -441,19 +441,25 @@
     (function () {
       var bar = document.getElementById('topLoadingBar');
       if (!bar) return;
+      var timer = null;
 
       function startLoading() {
-        bar.classList.remove('finish');
-        bar.style.transition = 'width 0.4s cubic-bezier(0.1, 0.7, 0.1, 1), opacity 0.2s ease';
+        if (timer) clearTimeout(timer);
+        bar.classList.remove('active', 'finish');
+        bar.style.width = '0%';
+        void bar.offsetWidth; // Force reflow
+
         bar.classList.add('active');
 
-        setTimeout(function () {
+        // Giữ thanh chạy mượt 96% phát sáng chờ trình duyệt chuyển hẳn trang.
+        // Tự hoàn thành sau 7s nếu mở tab mới hoặc hủy điều hướng.
+        timer = setTimeout(function () {
           bar.classList.add('finish');
           setTimeout(function () {
             bar.classList.remove('active', 'finish');
             bar.style.width = '0%';
-          }, 350);
-        }, 2200);
+          }, 400);
+        }, 7000);
       }
 
       document.addEventListener('click', function (e) {
@@ -466,6 +472,7 @@
       });
 
       window.addEventListener('pageshow', function () {
+        if (timer) clearTimeout(timer);
         bar.classList.remove('active', 'finish');
         bar.style.width = '0%';
       });
