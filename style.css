@@ -202,7 +202,6 @@
       padding: 110px 20px 130px;
       overflow: hidden;
       isolation: isolate;
-      background: #092011; /* Màu nền tối dịu ban đầu để tránh bị lộ/giật nền xanh lá giữa trang */
     }
 
     /* Ảnh nền nằm ở lớp riêng để có thể làm mờ tan dần ở đáy.
@@ -214,6 +213,7 @@
       position: absolute;
       inset: 0;
       z-index: -1;
+      background-color: #0c2b18;
       background-image:
         linear-gradient(180deg, rgba(0, 0, 0, .32) 0%, rgba(0, 0, 0, .14) 48%, rgba(10, 36, 18, .42) 100%),
         url("img/background_header.jpg");
