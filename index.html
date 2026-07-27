@@ -443,23 +443,30 @@
       if (!bar) return;
       var timer = null;
 
-      function startLoading() {
+      function resetLoading() {
         if (timer) clearTimeout(timer);
         bar.classList.remove('active', 'finish');
         bar.style.width = '0%';
+      }
+
+      function startLoading(isNewTab) {
+        resetLoading();
         void bar.offsetWidth; // Force reflow
 
-        bar.classList.add('active');
-
-        // Giữ thanh chạy mượt 96% phát sáng chờ trình duyệt chuyển hẳn trang.
-        // Tự hoàn thành sau 7s nếu mở tab mới hoặc hủy điều hướng.
-        timer = setTimeout(function () {
+        if (isNewTab) {
+          // Khi mở link ở tab mới (target="_blank" trên Laptop):
+          // Chạy nhanh 100% trong 0.5s rồi biến mất hẳn, tab cũ giữ nguyên sạch sẽ
           bar.classList.add('finish');
-          setTimeout(function () {
-            bar.classList.remove('active', 'finish');
-            bar.style.width = '0%';
-          }, 400);
-        }, 7000);
+          timer = setTimeout(resetLoading, 600);
+        } else {
+          // Khi chuyển trang trực tiếp trong cùng tab (hoặc mobile):
+          // Chạy 96% phát sáng chờ điều hướng
+          bar.classList.add('active');
+          timer = setTimeout(function () {
+            bar.classList.add('finish');
+            timer = setTimeout(resetLoading, 400);
+          }, 5000);
+        }
       }
 
       document.addEventListener('click', function (e) {
@@ -467,14 +474,17 @@
         if (!a) return;
         var href = a.getAttribute('href');
         if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
-          startLoading();
+          var target = a.getAttribute('target');
+          var isNewTab = target === '_blank';
+          startLoading(isNewTab);
         }
       });
 
-      window.addEventListener('pageshow', function () {
-        if (timer) clearTimeout(timer);
-        bar.classList.remove('active', 'finish');
-        bar.style.width = '0%';
+      // Tự động dọn dẹp ngay lập tức khi quay lại tab / focus trang
+      window.addEventListener('pageshow', resetLoading);
+      window.addEventListener('focus', resetLoading);
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) resetLoading();
       });
     })();
   </script>
