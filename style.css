@@ -32,6 +32,39 @@
       scroll-behavior: smooth
     }
 
+    /* ============ THANH LOAD NGANG KHI CHUYỂN TRANG (TOP PROGRESS BAR) ============ */
+    .top-loading-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3.5px;
+      background: linear-gradient(90deg, #8bc34a, #43a047, #e53935);
+      box-shadow: 0 0 10px rgba(139, 195, 74, 0.8), 0 0 5px rgba(229, 57, 53, 0.6);
+      z-index: 999999;
+      pointer-events: none;
+      opacity: 0;
+      transition: width 0.35s cubic-bezier(0.1, 0.7, 0.1, 1), opacity 0.2s ease;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .top-loading-bar.active {
+      opacity: 1;
+      width: 70%;
+      animation: topBarPulse 1.8s ease-in-out infinite alternate;
+    }
+
+    .top-loading-bar.finish {
+      opacity: 1;
+      width: 100%;
+    }
+
+    @keyframes topBarPulse {
+      0% { width: 65%; }
+      50% { width: 85%; }
+      100% { width: 92%; }
+    }
+
     /* ============ NỀN ĐỘNG NHIỀU LỚP (tông xanh lá) ============
        Cấu trúc mượn từ trang example, đổi toàn bộ navy/tím/cyan sang xanh lá Phú Nông.
        Tất cả position:fixed nên đứng yên khi cuộn, nằm dưới nội dung. */
@@ -169,6 +202,7 @@
       padding: 110px 20px 130px;
       overflow: hidden;
       isolation: isolate;
+      background: #092011; /* Màu nền tối dịu ban đầu để tránh bị lộ/giật nền xanh lá giữa trang */
     }
 
     /* Ảnh nền nằm ở lớp riêng để có thể làm mờ tan dần ở đáy.

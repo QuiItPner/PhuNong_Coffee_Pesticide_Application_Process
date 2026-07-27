@@ -17,6 +17,7 @@
   <meta property="og:image:width" content="600">
   <meta property="og:image:height" content="315">
 
+  <link rel="preload" as="image" href="img/background_header.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="icon" type="image/png" href="img/favicon.png">
@@ -27,6 +28,8 @@
 </head>
 
 <body>
+  <!-- Thanh load ngang chạy trên cùng khi bấm chuyển trang / xem chi tiết -->
+  <div id="topLoadingBar" class="top-loading-bar" aria-hidden="true"></div>
 
   <header id="stickyHeader" class="sticky-header">
     <div class="sticky-inner">
@@ -431,6 +434,40 @@
       });
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') closeLightbox();
+      });
+    })();
+
+    // Top Loading Bar khi click Xem chi tiết / chuyển link
+    (function () {
+      var bar = document.getElementById('topLoadingBar');
+      if (!bar) return;
+
+      function startLoading() {
+        bar.classList.remove('finish');
+        bar.style.transition = 'width 0.4s cubic-bezier(0.1, 0.7, 0.1, 1), opacity 0.2s ease';
+        bar.classList.add('active');
+
+        setTimeout(function () {
+          bar.classList.add('finish');
+          setTimeout(function () {
+            bar.classList.remove('active', 'finish');
+            bar.style.width = '0%';
+          }, 350);
+        }, 2200);
+      }
+
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest('a');
+        if (!a) return;
+        var href = a.getAttribute('href');
+        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+          startLoading();
+        }
+      });
+
+      window.addEventListener('pageshow', function () {
+        bar.classList.remove('active', 'finish');
+        bar.style.width = '0%';
       });
     })();
   </script>
