@@ -449,24 +449,18 @@
         bar.style.width = '0%';
       }
 
-      function startLoading(isNewTab) {
+      function startLoading() {
         resetLoading();
         void bar.offsetWidth; // Force reflow
 
-        if (isNewTab) {
-          // Khi mở link ở tab mới (target="_blank" trên Laptop):
-          // Chạy nhanh 100% trong 0.5s rồi biến mất hẳn, tab cũ giữ nguyên sạch sẽ
+        // Luôn kích hoạt thanh load mượt 96% phát sáng xanh neon liên tục
+        bar.classList.add('active');
+
+        // Tự động finish dọn dẹp sau 6s nếu không chuyển đi
+        timer = setTimeout(function () {
           bar.classList.add('finish');
-          timer = setTimeout(resetLoading, 600);
-        } else {
-          // Khi chuyển trang trực tiếp trong cùng tab (hoặc mobile):
-          // Chạy 96% phát sáng chờ điều hướng
-          bar.classList.add('active');
-          timer = setTimeout(function () {
-            bar.classList.add('finish');
-            timer = setTimeout(resetLoading, 400);
-          }, 5000);
-        }
+          timer = setTimeout(resetLoading, 400);
+        }, 6000);
       }
 
       document.addEventListener('click', function (e) {
@@ -474,17 +468,24 @@
         if (!a) return;
         var href = a.getAttribute('href');
         if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
-          var target = a.getAttribute('target');
-          var isNewTab = target === '_blank';
-          startLoading(isNewTab);
+          startLoading();
         }
       });
 
-      // Tự động dọn dẹp ngay lập tức khi quay lại tab / focus trang
+      // Tự động dọn dẹp thanh load khi:
+      // 1. Laptop mở tab mới khiến tab cũ mất focus (blur) hoặc bị ẩn (visibilitychange)
+      // 2. Mobile/Desktop quay lại trang (pageshow/focus)
       window.addEventListener('pageshow', resetLoading);
       window.addEventListener('focus', resetLoading);
+      window.addEventListener('blur', function () {
+        setTimeout(resetLoading, 400);
+      });
       document.addEventListener('visibilitychange', function () {
-        if (!document.hidden) resetLoading();
+        if (document.hidden) {
+          setTimeout(resetLoading, 300);
+        } else {
+          resetLoading();
+        }
       });
     })();
   </script>
